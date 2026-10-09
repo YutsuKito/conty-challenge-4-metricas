@@ -28,3 +28,12 @@ O autor realizou a revisão pessoal dos nove desafios, conforme declarado nesta 
 | Geração e revisão dos testes | Cobrir replay, janelas sobrepostas, última amostra, ETIMEDOUT, teto de tentativas, Retry-After em segundos/data HTTP, isolamento e conflito no fim do lote. |
 | Qualidade estrutural | Conferir que fetched_at difere de captured_at e que a validação integral evita gravação parcial. |
 
+
+
+## Verificação completa em 09/10/2026
+
+Janelas são comparadas por instante, timestamps de snapshots são normalizados para UTC e instantes equivalentes deduplicam. As chaves compostas usam tuplas serializadas para impedir colisões entre IDs com separadores. Respostas são cópias, parâmetros de retry são validados e snapshot nulo não grava parcialmente.
+
+O transporte HTTP rejeita JSON nulo, arrays e valores primitivos com 400 antes de chamar o serviço. Parâmetros de rota são decodificados uma vez; escape inválido retorna 400. Dois testes de transporte verificam esses comportamentos, incluindo códigos com caracteres especiais.
+
+Resultado desta rodada: 14 testes aprovados, zero falhas; checagem sintática aprovada e smoke HTTP com entrada válida 200 e inválida 400. As correções e a nova validação foram realizadas pelo Codex; não são atribuídas como revisão manual do autor.

@@ -13,7 +13,11 @@ export function http(service, routes) {
           if (raw.length > 1_000_000) throw Object.assign(new Error('Payload muito grande'),{status:413});
           try { body=raw ? JSON.parse(raw) : {}; } catch { throw Object.assign(new Error('JSON inválido'),{status:400}); }
         }
-        const result = await handler(service, body, ...m.slice(1));
+        if (!body || typeof body !== 'object' || Array.isArray(body)) throw Object.assign(new Error('Corpo JSON deve ser objeto'),{status:400});
+        let params;
+        try { params=m.slice(1).map(value=>decodeURIComponent(value)); }
+        catch { throw Object.assign(new Error('Parâmetro de rota inválido'),{status:400}); }
+        const result = await handler(service, body, ...params);
         res.writeHead(200,{'content-type':'application/json; charset=utf-8'});
         res.end(JSON.stringify(result)); return;
       }
